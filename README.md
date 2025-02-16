@@ -1,2 +1,2 @@
 # register
-Passenger check-in module
+Модуль регистрации пассажира на рейс
