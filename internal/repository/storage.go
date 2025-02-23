@@ -8,26 +8,26 @@ import (
 )
 
 type Storage struct {
-	flights []flight // рейсы открытые на регистрацию
+	flights []Flight // рейсы открытые на регистрацию
 	mu      sync.Mutex
 }
 
-type flight struct {
+type Flight struct {
 	flights       models.Flight
-	passenger     []models.Passenger
-	spaceAircraft map[string]seat // рассадка пассажиров по самолёту (ключ - место)
+	passengers    []models.Passenger
+	spaceAircraft map[string]Seat // рассадка пассажиров по самолёту (ключ - место)
 	mu            sync.Mutex
 	//muPassenger   sync.RWMutex
 }
 
-type seat struct {
-	seatClass string
-	employ    bool // true - место занято, false - пусто
+type Seat struct {
+	SeatClass string
+	Employ    bool // true - место занято, false - пусто
 }
 
 func NewStorage() *Storage {
 	return &Storage{
-		flights: make([]flight, 0),
+		flights: make([]Flight, 0),
 	}
 }
 
@@ -39,36 +39,37 @@ func (s *Storage) RegisterPassengerFlight(passenger models.Passenger, flightId s
 		// Если нашли нужный рейс
 		if s.flights[i].flights.FlightId == flightId {
 			// Проверяем, существует ли место с указанным номером
-			if seat, exists := s.flights[i].spaceAircraft[seatNumber]; exists && seat.employ == false {
+			if seat, exists := s.flights[i].spaceAircraft[seatNumber]; exists && seat.Employ == false {
 				// Место уже заняли
-				if seat.employ {
+				if seat.Employ {
 					return apperrors.ErrSeatTaken
 				}
-				logrus.Info("✅ RegisterPassengerFlight 👤", " flight: ", flightId, " place: ", seatNumber, "taken passenger: ", passenger.Uuid)
+				logrus.Info("✅ Storage.RegisterPassengerFlight 👤", " flight: ", flightId, " place: ", seatNumber, "taken passenger: ", passenger.Uuid)
 				// Занимаем место
 				s.flights[i].mu.Lock()
-				seat.employ = true
+				seat.Employ = true
 				s.flights[i].mu.Unlock()
 				return nil
 			} else {
-				logrus.Error("❌RegisterPassengerFlight 👤 error: ", apperrors.ErrSeatNotFound, " flight: ", flightId, " place: ", seatNumber, "already taken another passenger")
+				logrus.Error("❌Storage.RegisterPassengerFlight 👤 error: ", apperrors.ErrSeatNotFound, " flight: ", flightId, " place: ", seatNumber, "already taken another passenger")
 				return apperrors.ErrSeatNotFound
 			}
 		}
 	}
-	logrus.Error("❌RegisterPassengerFlight 👤 error: ", apperrors.ErrFlightNotFound, " flight: ", flightId)
+	logrus.Error("❌Storage.RegisterPassengerFlight 👤 error: ", apperrors.ErrFlightNotFound, " flight: ", flightId)
 	return apperrors.ErrFlightNotFound
 }
 
 // RegisterFlights - сздание нового рейса, открытого на регистрацию и карту самолёта
-func (s *Storage) RegisterFlights(fl models.Flight, spaceAircraft map[string]seat) error {
+func (s *Storage) RegisterFlights(fl models.Flight, spaceAircraft map[string]Seat, passengers []models.Passenger) error {
 	// Добавляем открытый рейс
 	s.mu.Lock()
-	logrus.Info("✅ RegisterFlights ✈️ flight: ", fl.FlightId, " ", fl.FlightName)
+	logrus.Info("✅ Storage.RegisterFlights ✈️ flight: ", fl.FlightId, " ", fl.FlightName)
 	// Добавление в хранилку
-	s.flights = append(s.flights, flight{
+	s.flights = append(s.flights, Flight{
 		flights:       fl,
 		spaceAircraft: spaceAircraft,
+		passengers:    passengers,
 	})
 	s.mu.Unlock()
 	return nil
@@ -79,16 +80,16 @@ func (s *Storage) RemoveFlight(flightId string) error {
 	defer s.mu.Unlock()
 	for i := 0; i < len(s.flights); i++ {
 		if s.flights[i].flights.FlightId == flightId {
-			logrus.Info("✅ RemoveFlight️ ✈️ 🗑️  flight: ", flightId, " ", s.flights[i].flights.FlightName)
+			logrus.Info("✅ Storage.RemoveFlight️ ✈️ 🗑️  flight: ", flightId, " ", s.flights[i].flights.FlightName)
 			s.flights = append(s.flights[:i], s.flights[i+1:]...)
 			return nil
 		}
 	}
-	logrus.Info("❌ RemoveFlight️ ✈️ 🗑️  flight: ", flightId)
+	logrus.Info("❌ Storage.RemoveFlight️ ✈️ 🗑️  flight: ", flightId)
 	return apperrors.ErrFlightNotFound
 }
 
-func (s *Storage) GetSpaceAircraft(flightId string) (map[string]seat, error) {
+func (s *Storage) GetSpaceAircraft(flightId string) (map[string]Seat, error) {
 	for i := 0; i < len(s.flights); i++ {
 		if s.flights[i].flights.FlightId == flightId {
 			return s.flights[i].spaceAircraft, nil
@@ -106,18 +107,38 @@ func (s *Storage) ExistFlight(flightId string) bool {
 	return false
 }
 
-func (s *Storage) ExistPassengerInFlight(passengerId, flightId string) bool {
+func (s *Storage) GetFlightForPassenger(passengerId string) (string, error) {
+	// Итерация по рейсам
 	for i := 0; i < len(s.flights); i++ {
-		// Ищем рейс
-		if s.flights[i].flights.FlightId == flightId {
-			for _, human := range s.flights[i].passenger {
-				if human.Uuid == passengerId {
-					return true
-				}
+		// Итерация по пассажирам этого рейса
+		for _, passenger := range s.flights[i].passengers {
+			if passenger.Uuid == passengerId {
+				return s.flights[i].flights.FlightId, nil
 			}
 		}
 	}
-	return false
+	return "", apperrors.ErrTicketNotFound
+}
+
+func (s *Storage) GetSeatForPassenger(flightId string, seatClass string) (string, error) {
+	for i := 0; i < len(s.flights); i++ {
+		if s.flights[i].flights.FlightId == flightId {
+			for seatNumber, seatOption := range s.flights[i].spaceAircraft {
+				s.flights[i].mu.Lock()
+				// Если место свободно и соответвует классу => занимаем
+				if !seatOption.Employ && seatOption.SeatClass == seatClass {
+					s.flights[i].spaceAircraft[seatNumber] = Seat{
+						SeatClass: seatClass,
+						Employ:    true,
+					}
+					s.flights[i].mu.Unlock()
+					return seatNumber, nil
+				}
+				s.flights[i].mu.Lock()
+			}
+		}
+	}
+	return "", apperrors.ErrInternalServer
 }
 
 //// Идём по номеру ряда

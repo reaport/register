@@ -7,4 +7,5 @@ var (
 	ErrSeatNotFound   = errors.New("❌ not found place ")
 	ErrSeatTaken      = errors.New("❌ seat already taken")
 	ErrTicketNotFound = errors.New("❌ ticket not found")
+	ErrInternalServer = errors.New("❌internal server error")
 )
