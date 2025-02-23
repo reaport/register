@@ -1,6 +1,6 @@
 package config
 
 type Config struct {
-	Menu     []string `json:"menu"`
-	RankSeat []string `json:"rankSeat"`
+	MealOption []string `json:"mealOption"`
+	SeatClass  []string `json:"seatClass"`
 }

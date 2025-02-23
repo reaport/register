@@ -1,4 +1,4 @@
 {
-  "menu":  ["Сет 1", "Сет 2", "Сет 3", "Без питания"],
-  "rankSeat": ["standard","VIP"]
+  "mealOption":  ["да", "нет"],
+  "seatClass": ["economy","business"]
 }

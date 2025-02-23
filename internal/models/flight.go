@@ -26,5 +26,5 @@ type Rows struct {
 
 type Seats struct {
 	SeatNumber string `json:"seatNumber"`
-	SeatType   string `json:"seatType"`
+	SeatClass  string `json:"seatClass"`
 }

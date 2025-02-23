@@ -2,6 +2,8 @@ package transport
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/reaport/register/internal/config"
+	"github.com/reaport/register/internal/service"
 	"net/http"
 )
 
@@ -12,10 +14,12 @@ const (
 )
 
 type API struct {
+	cfg     config.Config
+	service service.Service
 }
 
-func New() *API {
-	return &API{}
+func New(service service.Service) *API {
+	return &API{service: service}
 }
 
 func (api *API) Register(router *mux.Router) {
