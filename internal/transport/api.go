@@ -14,12 +14,12 @@ const (
 )
 
 type API struct {
-	cfg     config.Config
-	service service.Service
+	Cfg     config.Config
+	Service *service.Service
 }
 
-func New(service service.Service) *API {
-	return &API{service: service}
+func NewAPI(service *service.Service, Cfg config.Config) *API {
+	return &API{Service: service, Cfg: Cfg}
 }
 
 func (api *API) Register(router *mux.Router) {

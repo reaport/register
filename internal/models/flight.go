@@ -14,5 +14,5 @@ type Flight struct {
 type SeatsAircraft struct {
 	SeatNumber string `json:"seatNumber"`
 	SeatClass  string `json:"seatClass"`
-	Employ     string `json:"-"`
+	Employ     bool   `json:"-"` // true- занято, false - свободно
 }

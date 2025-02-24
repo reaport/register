@@ -2,7 +2,9 @@ package transport
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/reaport/register/internal/models"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -22,11 +24,15 @@ func (api *API) RegisterPassenger(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = api.service.RegisterPassenger(passenger)
+	resp, err := api.service.RegisterPassenger(passenger)
 	if err != nil {
-		// Todo: SWITCH ошибок и resp, status code
+		writeResponse(w, err.Error(), models.GetCode(err.Error()))
 	}
+	w.Header().Set("Content-Type", "application/json")
+	jsonResponse, _ := json.Marshal(resp)
+	w.Write(jsonResponse)
 	w.WriteHeader(http.StatusOK)
+
 }
 
 func (api *API) RegisterFlights(w http.ResponseWriter, r *http.Request) {
@@ -34,42 +40,68 @@ func (api *API) RegisterFlights(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&flight)
 	if err != nil {
+		logrus.Error("❌Api.RegisterPassengerFlight validation error flight")
 		writeResponse(w, ErrValidation, http.StatusBadRequest)
 		return
 	}
 
 	defer r.Body.Close()
 
-	if flight.FlightId == "" || flight.FlightName == "" || flight.Gate == "" || flight.Terminal == "" ||
-		flight.Aircraft.TotalRows == 0 || flight.Aircraft.TotalSeatsPerRow == 0 || len(flight.Aircraft.Rows) == 0 {
+	if flight.FlightId == "" || flight.FlightName == "" || flight.EndRegisterTime.IsZero() ||
+		flight.EndRegisterTime.IsZero() || flight.DepartureTime.IsZero() || flight.StartPlantingTime.IsZero() ||
+		flight.SeatsAircraft == nil || len(flight.SeatsAircraft) == 0 {
+		logrus.Error("❌Api.RegisterPassengerFlight validation error flight")
 		writeResponse(w, ErrValidation, http.StatusBadRequest)
 		return
 	}
 
-	for _, row := range flight.Aircraft.Rows {
-		if row.RowNumber == 0 || len(row.Seats) == 0 {
+	for _, v := range flight.SeatsAircraft {
+		if v.SeatNumber == "" || v.SeatClass == "" {
+			logrus.Error("❌Api.RegisterPassengerFlight validation error flight")
 			writeResponse(w, ErrValidation, http.StatusBadRequest)
 			return
 		}
-		for _, seat := range row.Seats {
-			if seat.SeatNumber == "" || seat.SeatClass == "" {
-				writeResponse(w, ErrValidation, http.StatusBadRequest)
-				return
-			}
-		}
 	}
-	// Todo: Проверить совпадание кол-ва мест и переданных данных (никакие опции мест не потерялись)
-	passengers := make([]models.Passenger, flight.Aircraft.TotalRows*flight.Aircraft.TotalSeatsPerRow)
-	// Todo: проверка на овербукинг (по длине слайса)
-	// Todo: сделать запрос Ане и получить пассажиров ( не забыть сравнить значения питания и остального)
-
-	err := api.service.RegisterFlights(flight, passengers)
+	logrus.Error("✅ Api.RegisterPassengerFlight make get request for get passenger")
+	// Формируем URL для GET-запроса
+	url := fmt.Sprintf("http://localhost:8081/flight/%s/passengers", flight.FlightId)
+	var resp *http.Response
+	// Выполняем GET-запрос
+	resp, err = http.Get(url)
 	if err != nil {
-		// Todo: SWITCH ошибок и resp, status code
+		logrus.Error("❌Api.RegisterPassengerFlight get request break")
+		writeResponse(w, ErrInternal, http.StatusInternalServerError)
+		return
 	}
-	// 7. Возвращаем успешный ответ
+	defer resp.Body.Close()
+
+	// Проверяем статус-код (что рейс найден)
+	if resp.StatusCode != http.StatusOK {
+		writeResponse(w, ErrInternal, http.StatusInternalServerError)
+		return
+	}
+
+	// Читаем и парсим тело ответа
+	var passengers []models.Passenger
+	err = json.NewDecoder(resp.Body).Decode(&passengers)
+	if err != nil {
+		logrus.Error("❌Api.RegisterPassengerFlight validation error passengers")
+		writeResponse(w, ErrValidation, http.StatusBadRequest)
+		return
+	}
+
+	if len(passengers) > len(flight.SeatsAircraft) {
+		logrus.Error("❌Api.RegisterPassengerFlight 👤 unexpected overbooking: ", " flight: ", flight.FlightId)
+		writeResponse(w, ErrInternal, http.StatusInternalServerError)
+		return
+	}
+	logrus.Error("✅ Api.RegisterPassengerFlight make register flight")
+
+	err = api.service.RegisterFlights(flight, passengers)
+	if err != nil {
+		writeResponse(w, err.Error(), models.GetCode(err.Error()))
+	}
 	w.WriteHeader(http.StatusOK)
-	// Запрос Ане для получения пассажира
 }
 
 func (api *API) Administer(w http.ResponseWriter, r *http.Request) {

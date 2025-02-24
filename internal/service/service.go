@@ -7,41 +7,26 @@ import (
 )
 
 type Service struct {
-	repo repository.Storage
+	repo *repository.Storage
 }
 
-func (s *Service) RegisterPassenger(passenger models.Passenger) error {
-	flightId, err := s.repo.GetFlightForPassenger(passenger.Uuid)
-	if err != nil {
-		logrus.Info("❌🔍  Service.RegisterPassenger 👤 passenger: ", passenger.Uuid, " found is not flight", flightId)
-		return err
-	}
-	logrus.Info("✅🔍  Service.RegisterPassenger 👤 passenger: ", passenger.Uuid, " found is flight", flightId)
-
-	// TODO Нужно замена питания
-
-	// Получаем место для пассажира с нужным классом
-	seat, err := s.repo.GetSeatForPassenger(flightId, passenger.SeatClass)
-	if err != nil {
-		logrus.Info("❗❗❗Service.RegisterPassenger unexpected overbooking️ ✈️🪑❌")
-		return err
-	}
+func NewService(repo *repository.Storage) *Service {
+	return &Service{repo: repo}
+}
+func (s *Service) RegisterPassenger(passenger models.Passenger) (models.PassengerResponse, error) {
 
 	// Регистрируем место
-	err := s.repo.RegisterPassengerFlight(passenger, flightId, seat)
+	passengerResponse, err := s.repo.RegisterPassengerFlight(passenger)
 	if err != nil {
 		logrus.Info("❗❗❗Service.RegisterPassenger registration not success✈️🪑❌")
-		return err
+		return models.PassengerResponse{}, err
 	}
-	return nil
+	return passengerResponse, nil
 }
 
 func (s *Service) RegisterFlights(flight models.Flight, passengers []models.Passenger) error {
-	spaceAircraft := make(map[string]repository.Seat, 0)
-	// TODO: Логика преобразования Flight. Aircraft в spaceAircraft map[string]Seat
-
 	// Регистрация рейса
-	err := s.repo.RegisterFlights(flight, spaceAircraft, passengers)
+	err := s.repo.RegisterFlights(flight, passengers)
 	if err != nil {
 		logrus.Error("❌✈️ Service.RegisterFlights not success flight: ", flight.FlightId, " error:", err.Error())
 		return err

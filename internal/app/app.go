@@ -2,6 +2,9 @@ package app
 
 import (
 	"context"
+	"github.com/reaport/register/internal/config"
+	"github.com/reaport/register/internal/repository"
+	"github.com/reaport/register/internal/service"
 	"github.com/reaport/register/internal/transport"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -11,6 +14,12 @@ import (
 )
 
 func Run() {
+	// Todo:Реализовать конфиг
+
+	cfg := config.Config{}
+	repo := repository.NewStorage()
+	service := service.NewService(repo)
+	api := transport.NewAPI(service, cfg)
 	srv := new(transport.Server)
 	go func() {
 		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
