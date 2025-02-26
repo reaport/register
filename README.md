@@ -1,6 +1,7 @@
 # ✈️ Модуль регистрации пассажиров на рейс
 [![Swagger](https://img.shields.io/badge/Swagger-Docs-brightgreen?logo=swagger)](https://github.com/reaport/docs/tree/feat/Register)
 [![GoogleDocs](https://img.shields.io/badge/GoogleDocs-Docs-blue?logo=googleDocs)](https://docs.google.com/document/d/1-A99pLnf-T3KJgUowspAIestsUUSzbDQ0Sfr5KvSmdI/edit?tab=t.bpkqrrz6nfsl)
+
 Модуль для регистрации пассажиров с выбором питания и сдачей багажа.
 
 ---
