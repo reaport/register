@@ -21,24 +21,24 @@ type Service struct {
 
 func NewService(repo *repository.Storage, cfg config.Config) *Service {
 	logrus.Info("service instance initialized")
-	return &Service{repo: repo, cfg: cfg}
+	return &Service{repo: repo, Cfg: cfg}
 }
 func (s *Service) RegisterPassenger(passenger models.Passenger) (models.PassengerResponse, error) {
 	logrus.Info("Service RegisterPassenger")
 	var i int
 	// Проверяем что питание соотв конфигу
-	for i = 0; i < len(s.cfg.MealOption); i++ {
-		if passenger.MealOption == s.cfg.MealOption[i] {
+	for i = 0; i < len(s.Cfg.MealOption); i++ {
+		if passenger.MealOption == s.Cfg.MealOption[i] {
 			break
 		}
 	}
 
-	if i == len(s.cfg.MealOption) {
+	if i == len(s.Cfg.MealOption) {
 		passenger.MealOption = ""
 	}
 
 	// Проверяем багаж
-	if passenger.BaggageWeight > s.cfg.MaxBaggage {
+	if passenger.BaggageWeight > s.Cfg.MaxBaggage {
 		return models.PassengerResponse{}, errors.ErrBaggageSize
 	}
 	// Регистрируем место
@@ -153,7 +153,7 @@ func (s *Service) SendOrch(reqData models.RegistrationFinishRequest, flightId st
 	}
 
 	// Формируем URL с flightId
-	url := fmt.Sprintf(s.cfg.UrlOrchestrator, flightId)
+	url := fmt.Sprintf(s.Cfg.UrlOrchestrator, flightId)
 
 	// Создаем POST-запрос
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
