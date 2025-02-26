@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/reaport/register/internal/config"
+	"github.com/reaport/register/internal/errors"
 	"github.com/reaport/register/internal/models"
 	"github.com/sirupsen/logrus"
 	"sync"
@@ -33,7 +34,7 @@ func (s *Storage) GetData() []Flight {
 	logrus.Info("✅✅✅ GetData ✅✅✅ ")
 	for _, f := range s.flights {
 		fmt.Println("✈️ flightId: ", f.flights.FlightId, "✈️ flightName: ", f.flights.FlightName, " seat:", f.flights.SeatsAircraft)
-		fmt.Println("time ", f.flights.EndRegisterTime)
+		fmt.Println("End Register Time ", f.flights.EndRegisterTime)
 		fmt.Println("👤 passengers", f.passengers)
 
 	}
@@ -48,12 +49,10 @@ func (s *Storage) RegisterPassengerFlight(passenger models.Passenger) (models.Pa
 	if err != nil {
 		return models.PassengerResponse{}, err
 	}
-	logrus.Info("mock")
 	for i := 0; i < len(s.flights); i++ {
 		// Если нашли нужный рейс
 		if s.flights[i].flights.FlightId == flightId {
 			for seatIndex, seat := range s.flights[i].flights.SeatsAircraft {
-				logrus.Info("!!! seat:", seat, "seatPassenger", passenger.SeatClass)
 				// Проверяем соответсвует ли класс и свободно ли место
 				if seat.SeatClass == s.flights[i].passengers[humanId].SeatClass && !seat.Employ {
 					logrus.Info("✅ Storage.RegisterPassengerFlight 👤", " flight: ", flightId, " place: ", seat.SeatNumber, "taken passenger: ", passenger.Uuid)
@@ -63,11 +62,11 @@ func (s *Storage) RegisterPassengerFlight(passenger models.Passenger) (models.Pa
 				}
 			}
 			logrus.Error("❌Storage.RegisterPassengerFlight 👤 unexpected overbooking: ", " flight: ", flightId)
-			return models.PassengerResponse{}, models.ErrInternalServer
+			return models.PassengerResponse{}, errors.ErrInternalServer
 		}
 	}
 	logrus.Error("❌Storage.RegisterPassengerFlight 👤 : ", " flight: ", flightId, "  not found")
-	return models.PassengerResponse{}, models.ErrInternalServer
+	return models.PassengerResponse{}, errors.ErrTicketNotFound
 }
 
 // RegisterFlights - создание нового рейса, открытого на регистрацию и карту самолёта
@@ -94,7 +93,7 @@ func (s *Storage) RemoveFlight(flightId string) error {
 		}
 	}
 	logrus.Info("❌ Storage.RemoveFlight️ ✈️ 🗑  flight: ", flightId)
-	return models.ErrFlightNotFound
+	return errors.ErrInternalServer
 }
 
 // Получение рейса для пассажира
@@ -116,7 +115,7 @@ func (s *Storage) getFlightAndIndexHumanAndSetMeal(human models.Passenger) (stri
 			}
 		}
 	}
-	return "", 0, models.ErrTicketNotFound
+	return "", 0, errors.ErrTicketNotFound
 }
 
 func (s *Storage) GetMealsAndBaggage(flightId string) (models.RegistrationFinishRequest, error) {
@@ -133,5 +132,5 @@ func (s *Storage) GetMealsAndBaggage(flightId string) (models.RegistrationFinish
 			return result, nil
 		}
 	}
-	return models.RegistrationFinishRequest{}, models.ErrFlightNotFound
+	return models.RegistrationFinishRequest{}, errors.ErrInternalServer
 }

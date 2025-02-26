@@ -14,7 +14,7 @@ func main() {
 		DisableSorting:  false,                 // Сортировка полей)
 	})
 	if err := initConfig(); err != nil {
-		logrus.Fatalf("error initalization config %s", err.Error())
+		logrus.Fatalf("errors initalization config %s", err.Error())
 	}
 	app.Run()
 }

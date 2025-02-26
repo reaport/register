@@ -26,7 +26,7 @@ func Run() {
 	srv := transport.NewServer(api)
 	go func() {
 		if err := srv.Run(viper.GetString("port")); err != nil {
-			logrus.Fatalf("error occured while running http server %s", err.Error())
+			logrus.Fatalf("errors occured while running http server %s", err.Error())
 		}
 	}()
 
@@ -37,6 +37,6 @@ func Run() {
 
 	logrus.Println("shutting down server...")
 	if err := srv.Shutdown(context.Background()); err != nil {
-		logrus.Fatalf("error occured while shutting down server %s", err.Error())
+		logrus.Fatalf("errors occured while shutting down server %s", err.Error())
 	}
 }

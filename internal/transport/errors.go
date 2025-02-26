@@ -1,10 +1,10 @@
 package transport
 
 const (
-	ErrValidation = "Validation error"
-	ErrInternal   = "Internal server error"
+	ErrValidation = "Validation errors"
+	ErrInternal   = "Internal server errors"
 )
 
 type ErrorResponse struct {
-	Message string `json:"error"`
+	Message string `json:"errors"`
 }

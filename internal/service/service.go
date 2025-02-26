@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/reaport/register/internal/config"
+	"github.com/reaport/register/internal/errors"
 	"github.com/reaport/register/internal/models"
 	"github.com/reaport/register/internal/repository"
 	"github.com/sirupsen/logrus"
@@ -15,7 +16,7 @@ import (
 
 type Service struct {
 	repo *repository.Storage
-	cfg  config.Config
+	Cfg  config.Config
 }
 
 func NewService(repo *repository.Storage, cfg config.Config) *Service {
@@ -38,7 +39,7 @@ func (s *Service) RegisterPassenger(passenger models.Passenger) (models.Passenge
 
 	// Проверяем багаж
 	if passenger.BaggageWeight > s.cfg.MaxBaggage {
-		return models.PassengerResponse{}, models.ErrBaggageSize
+		return models.PassengerResponse{}, errors.ErrBaggageSize
 	}
 	// Регистрируем место
 	passengerResponse, err := s.repo.RegisterPassengerFlight(passenger)
@@ -54,7 +55,7 @@ func (s *Service) RegisterFlights(flight models.Flight, passengers []models.Pass
 	// Регистрация рейса
 	registationTime, err := s.repo.RegisterFlights(flight, passengers)
 	if err != nil {
-		logrus.Error("❌✈️ Service.RegisterFlights not success flight: ", flight.FlightId, " error:", err.Error())
+		logrus.Error("❌✈️ Service.RegisterFlights not success flight: ", flight.FlightId, " errors:", err.Error())
 		return err
 	}
 	go s.StopRegister(registationTime, flight.FlightId)
@@ -76,7 +77,7 @@ func (s *Service) StopRegister(registationTime time.Time, flightId string) {
 	if time.Now().After(registationTime) {
 		err := s.repo.RemoveFlight(flightId)
 		if err != nil {
-			logrus.Error("❌✈️ Service.StopRegister not success flight: ", flightId, " error:", err.Error())
+			logrus.Error("❌✈️ Service.StopRegister not success flight: ", flightId, " errors:", err.Error())
 		}
 		return
 	}
@@ -89,20 +90,20 @@ func (s *Service) StopRegister(registationTime time.Time, flightId string) {
 			err := s.repo.RemoveFlight(flightId)
 
 			if err != nil {
-				logrus.Error("❌✈️ Service.StopRegister (timer) not success flight: ", flightId, " error:", err.Error())
+				logrus.Error("❌✈️ Service.StopRegister (timer) not success flight: ", flightId, " errors:", err.Error())
 			}
 		}()
 		// Время наступило, отправляем никите и удаляем
 		result, err := s.repo.GetMealsAndBaggage(flightId)
 		if err != nil {
-			logrus.Error("❌✈️ Service.StopRegister not success get info flight ", flightId, " error:", err.Error())
+			logrus.Error("❌✈️ Service.StopRegister not success get info flight ", flightId, " errors:", err.Error())
 			return
 		}
 		// ОТправляем Никите
 		err = s.SendOrch(result, flightId)
 		if err != nil {
 			// Если не прошло сохраняем  models.RegistrationFinishRequest в backUp.txt
-			logrus.Error("❌✈️ Service.StopRegister not success get send Hikita ", flightId, " error:", err.Error())
+			logrus.Error("❌✈️ Service.StopRegister not success get send Hikita ", flightId, " errors:", err.Error())
 		}
 	}
 }
@@ -134,14 +135,14 @@ func (s *Service) SendOrch(reqData models.RegistrationFinishRequest, flightId st
 	// Если время еще не наступило, сохраняем данные в backUp.txt
 	file, err := os.Create("backUp.txt")
 	if err != nil {
-		logrus.Error("❌✈️ Service.StopRegister dont open file backUp ", flightId, " error:", err.Error())
+		logrus.Error("❌✈️ Service.StopRegister dont open file backUp ", flightId, " errors:", err.Error())
 	}
 	defer file.Close()
 	// Сохраняем данные в JSON
 	err = json.NewEncoder(file).Encode("flight_id:" + flightId)
 	err = json.NewEncoder(file).Encode(req)
 	if err != nil {
-		logrus.Error("❌✈️ Service.StopRegister dont save file backUp ", flightId, " error:", err.Error())
+		logrus.Error("❌✈️ Service.StopRegister dont save file backUp ", flightId, " errors:", err.Error())
 	}
 
 	// Логируем преобразованные данные
