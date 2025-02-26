@@ -7,7 +7,9 @@ import (
 
 var (
 	ErrTicketNotFound = errors.New("❌ ticket not found")
+	ErrFlightNotFound = errors.New("❌ flight not found")
 	ErrInternalServer = errors.New("❌internal server error")
+	ErrBaggageSize    = errors.New("❌ exceeding the allowed baggage size")
 )
 
 func GetCode(message string) int {

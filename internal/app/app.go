@@ -16,18 +16,21 @@ import (
 func Run() {
 	// Todo:Реализовать конфиг
 
-	cfg := config.Config{}
+	cfg, err := config.NewConfig()
+	if err != nil {
+		logrus.Fatal(err)
+	}
 	repo := repository.NewStorage()
-	service := service.NewService(repo)
-	api := transport.NewAPI(service, cfg)
-	srv := new(transport.Server)
+	service := service.NewService(repo, cfg)
+	api := transport.NewAPI(service)
+	srv := transport.NewServer(api)
 	go func() {
-		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err := srv.Run(viper.GetString("port")); err != nil {
 			logrus.Fatalf("error occured while running http server %s", err.Error())
 		}
 	}()
 
-	logrus.Print("todo server started")
+	logrus.Print("register server started")
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit

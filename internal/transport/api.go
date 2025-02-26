@@ -2,8 +2,8 @@ package transport
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/reaport/register/internal/config"
 	"github.com/reaport/register/internal/service"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -11,20 +11,24 @@ const (
 	RegisterPassenger = "/passenger"
 	RegisterFlight    = "/flights"
 	AdminParam        = "/admin"
+	Data              = "/data"
 )
 
 type API struct {
-	Cfg     config.Config
-	Service *service.Service
+	service *service.Service
+	router  *mux.Router
 }
 
-func NewAPI(service *service.Service, Cfg config.Config) *API {
-	return &API{Service: service, Cfg: Cfg}
+func NewAPI(service *service.Service) *API {
+	logrus.Info("api instance initialized")
+	return &API{service: service, router: mux.NewRouter()}
 }
 
-func (api *API) Register(router *mux.Router) {
-	router.HandleFunc(RegisterPassenger, api.RegisterPassenger).Methods(http.MethodPost)
-	router.HandleFunc(RegisterFlight, api.RegisterFlights).Methods(http.MethodPost)
-	router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodPost)
-	router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodGet)
+func (api *API) Register() {
+	logrus.Info("api Register handlers")
+	api.router.HandleFunc(RegisterPassenger, api.RegisterPassenger).Methods(http.MethodPost)
+	api.router.HandleFunc(RegisterFlight, api.RegisterFlights).Methods(http.MethodPost)
+	api.router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodPost)
+	api.router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodGet)
+	api.router.HandleFunc(Data, api.GetData).Methods(http.MethodGet)
 }
