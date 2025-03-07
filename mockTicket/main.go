@@ -12,6 +12,7 @@ type Passenger struct {
 	PassengerId string `json:"passengerId"`
 	MealOption  string `json:"mealOption"`
 	SeatClass   string `json:"seatClass"`
+	Baggage     string `json:"baggage"`
 }
 
 // Обработчик GET-запроса
@@ -40,11 +41,13 @@ func passengersHandler(w http.ResponseWriter, r *http.Request) {
 			PassengerId: "uuid-1234",
 			MealOption:  "да",
 			SeatClass:   "business",
+			Baggage:     "да",
 		},
 		{
 			PassengerId: "uuid-5678",
 			MealOption:  "нет",
 			SeatClass:   "economy",
+			Baggage:     "да",
 		},
 	}
 

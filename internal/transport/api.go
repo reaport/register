@@ -30,5 +30,5 @@ func (api *API) Register() {
 	api.router.HandleFunc(RegisterFlight, api.RegisterFlights).Methods(http.MethodPost)
 	api.router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodPost)
 	api.router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodGet)
-	api.router.HandleFunc(Data, api.GetData).Methods(http.MethodGet)
+	api.router.HandleFunc(Data, api.DataHandler).Methods(http.MethodGet)
 }

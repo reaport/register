@@ -68,7 +68,7 @@ func (s *Service) Administer() {
 
 }
 
-func (s *Service) GetData() []repository.Flight {
+func (s *Service) GetData() map[string][]string {
 	return s.repo.GetData()
 }
 

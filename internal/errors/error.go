@@ -5,10 +5,11 @@ import (
 )
 
 var (
-	ErrValid          = errors.New("validation errors")
-	ErrBaggageSize    = errors.New("exceeding the allowed baggage size")
-	ErrTicketNotFound = errors.New("the passenger was not found for registration")
-	ErrInternalServer = errors.New("internal server errors")
+	ErrValid             = errors.New("validation errors")
+	ErrBaggageSize       = errors.New("exceeding the allowed baggage size")
+	ErrTicketNotFound    = errors.New("the passenger was not found for registration")
+	ErrTicketUnavailable = errors.New("failed get passengers in the ticket  module for this flight")
+	ErrInternalServer    = errors.New("internal server errors")
 )
 
 func GetCode(message string) int {
@@ -21,6 +22,8 @@ func GetCode(message string) int {
 		return 404
 	case ErrInternalServer.Error():
 		return 500
+	case ErrTicketUnavailable.Error():
+		return 502
 	default:
 		return 500
 	}

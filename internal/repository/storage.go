@@ -29,16 +29,19 @@ func NewStorage() *Storage {
 	}
 }
 
-func (s *Storage) GetData() []Flight {
+func (s *Storage) GetData() map[string][]string {
 	logrus.Info("GetData ", s.flights)
 	logrus.Info("✅✅✅ GetData ✅✅✅ ")
+	data := make(map[string][]string)
 	for _, f := range s.flights {
 		fmt.Println("✈️ flightId: ", f.flights.FlightId, "✈️ flightName: ", f.flights.FlightName, " seat:", f.flights.SeatsAircraft)
 		fmt.Println("End Register Time ", f.flights.EndRegisterTime)
 		fmt.Println("👤 passengers", f.passengers)
-
+		for _, pass := range f.passengers {
+			data[f.flights.FlightId] = append(data[f.flights.FlightId], pass.Uuid)
+		}
 	}
-	return s.flights
+	return data
 }
 
 // RegisterPassengerFlight - регистрация конкретного пассажира на рейс
