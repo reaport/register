@@ -38,7 +38,7 @@
   "maxBaggage" : 20.0,
   "urlTicketService": "https://tickets.reaport.ru/flight/%s/passengers",
   "urlOrchestrator": "http://orchestrator:8087/registration/%s/finish",
-  "mockUrlTicketService": "http://ticket:8086/flight/%s/passengers"",
+  "mockUrlTicketService": "http://ticket:8086/flight/%s/passengers",
   "mockUrlOrchestrator": "http://orchestrator:8087/registration/%s/finish"
 }
 ```
