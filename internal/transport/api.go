@@ -10,7 +10,6 @@ import (
 const (
 	RegisterPassenger = "/passenger"
 	RegisterFlight    = "/flights"
-	AdminParam        = "/admin"
 	Data              = "/data"
 )
 
@@ -28,7 +27,5 @@ func (api *API) Register() {
 	logrus.Info("api Register handlers")
 	api.router.HandleFunc(RegisterPassenger, api.RegisterPassenger).Methods(http.MethodPost)
 	api.router.HandleFunc(RegisterFlight, api.RegisterFlights).Methods(http.MethodPost)
-	api.router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodPost)
-	api.router.HandleFunc(AdminParam, api.Administer).Methods(http.MethodGet)
-	api.router.HandleFunc(Data, api.DataHandler).Methods(http.MethodGet)
+	api.router.HandleFunc(Data, api.DataHandler)
 }

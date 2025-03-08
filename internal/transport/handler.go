@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 func (api *API) RegisterPassenger(w http.ResponseWriter, r *http.Request) {
@@ -342,14 +343,22 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 		if err := tmpl.Execute(w, data); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
+	case "POST":
+		logrus.Info(r.FormValue("urlTicketService"))
+		// Обновляем значения переменных из формы
+		api.service.Cfg.UrlTicketService = r.FormValue("urlTicketService")
+		api.service.Cfg.UrlOrchestrator = r.FormValue("urlOrchestrator")
+		var err error
+		api.service.Cfg.MaxBaggage, err = strconv.ParseFloat(r.FormValue("maxBaggage"), 64)
+		if err != nil {
+			logrus.Errorf("Error parsing maxBaggage %v", err)
+		}
+		// Возвращаем пользователя на страницу с GET запросом
+		http.Redirect(w, r, "/data", http.StatusSeeOther)
 	// Если метод не поддерживается
 	default: // Если метод не поддерживается
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
-}
-
-func (api *API) Administer(w http.ResponseWriter, r *http.Request) {
-
 }
 
 func writeResponse(w http.ResponseWriter, err error) {
