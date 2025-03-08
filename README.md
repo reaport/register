@@ -18,12 +18,16 @@
 ## 🚀 Установка и запуск
 
 Для запуска приложения можно возпользоваться командами:
+* ``docker-compose up``
+  
+Без docker:
 * ``make run``
 * ``go run cmd/main.go``
 
 #### Mock - сервисы :
 *  ``make run_ticket`` покупка билетов
 *  ``make run_orchestrator`` оркестратор
+
 
 ### ⚙️ Конфигурация 
 `Файл: config.json`
@@ -33,16 +37,16 @@
   "mealOption":  ["Standard", "Vegetarian", "Vegan", "Gluten-Free"],
   "maxBaggage" : 20.0,
   "urlTicketService": "https://tickets.reaport.ru/flight/%s/passengers",
-  "urlOrchestrator": "http://localhost:8087/registration/%s/finish",
-  "mockUrlTicketService": "http://localhost:8086/flight/%s/passengers",
-  "mockUrlOrchestrator": "http://localhost:8087/registration/%s/finish"
+  "urlOrchestrator": "http://orchestrator:8087/registration/%s/finish",
+  "mockUrlTicketService": ""http://ticket:8086/flight/%s/passengers"",
+  "mockUrlOrchestrator": "http://orchestrator:8087/registration/%s/finish"
 }
 ```
 
 * `mealOption` - типы питания(динамическое изменение)
 * `maxBaggage` - Максимально возможный размер багажа
 * `urlTicketService` - url модуля покупки билетов
-* `urlOrchestrator` - url модуля оркестратора
+* `urlOrchestrator` - url модуля оркестратора (ожидание актуального url)
 *  `mockUrlTicketService` - url mock- модуля покупки билетов
 * `mockUrlOrchestrator` - url mock -модуля оркестратора
 
