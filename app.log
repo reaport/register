@@ -1,0 +1,60 @@
+[36mINFO[0m[2025-03-08 19:30:08] storage instance initialized                 
+[36mINFO[0m[2025-03-08 19:30:08] service instance initialized                 
+[36mINFO[0m[2025-03-08 19:30:08] api instance initialized                     
+[36mINFO[0m[2025-03-08 19:30:08] server instance initialized                  
+[36mINFO[0m[2025-03-08 19:30:08] register server started                      
+[36mINFO[0m[2025-03-08 19:30:08] api Register handlers                        
+[36mINFO[0m[2025-03-08 19:30:08] server run                                   
+[36mINFO[0m[2025-03-08 19:30:25] GetData []                                   
+[36mINFO[0m[2025-03-08 19:30:25] ✅✅✅ GetData ✅✅✅                              
+[36mINFO[0m[2025-03-08 19:30:30] urlTicketService: http://localhost:8086/flight/%s/passengers 
+[36mINFO[0m[2025-03-08 19:30:30] urlOrchestrator: http://localhost:8087/registration/%s/finish 
+[36mINFO[0m[2025-03-08 19:30:30] GetData []                                   
+[36mINFO[0m[2025-03-08 19:30:30] ✅✅✅ GetData ✅✅✅                              
+[36mINFO[0m[2025-03-08 19:30:37] api RegisterFlights handlers                 
+[36mINFO[0m[2025-03-08 19:30:37] ✅ Api.RegisterPassengerFlight make get request for get passenger 
+[36mINFO[0m[2025-03-08 19:30:37] ✅ Api.RegisterPassengerFlight make register flight 
+[36mINFO[0m[2025-03-08 19:30:37] Service RegisterFlights                      
+[36mINFO[0m[2025-03-08 19:30:37] ✅ Storage.RegisterFlights ✈️ register flight: pp1b2c3d4-e5f6-7890-g1h2 SU-1234 
+[36mINFO[0m[2025-03-08 19:30:37] ✅✈️ Service.RegisterFlights success flight: pp1b2c3d4-e5f6-7890-g1h2 
+[36mINFO[0m[2025-03-08 19:30:45] GetData [{{pp1b2c3d4-e5f6-7890-g1h2 SU-1234 {0 63877062900 <nil>} {0 63896135400 <nil>} {0 63832975800 <nil>} [{1A business false} {1B business false} {2A economy false} {2B economy false}]} [{uuid-1234 0 Gluten-Free business false} {uuid-5678 0 Standard economy false}] {0 0}}] 
+[36mINFO[0m[2025-03-08 19:30:45] ✅✅✅ GetData ✅✅✅                              
+[36mINFO[0m[2025-03-08 19:31:11] api RegisterFlights handlers                 
+[36mINFO[0m[2025-03-08 19:31:11] ✅ Api.RegisterPassengerFlight make get request for get passenger 
+[36mINFO[0m[2025-03-08 19:31:11] ✅ Api.RegisterPassengerFlight make register flight 
+[36mINFO[0m[2025-03-08 19:31:11] Service RegisterFlights                      
+[36mINFO[0m[2025-03-08 19:31:11] ✅ Storage.RegisterFlights ✈️ register flight: pp1b2c3d4-e5f6-7890-g1h2 SU-1234 
+[36mINFO[0m[2025-03-08 19:31:11] ✅✈️ Service.RegisterFlights success flight: pp1b2c3d4-e5f6-7890-g1h2 
+[36mINFO[0m[2025-03-08 19:31:24] shutting down server...                      
+[31mFATA[0m[2025-03-08 19:31:24] errors occured while running http server http: Server closed 
+[36mINFO[0m[2025-03-08 19:31:27] storage instance initialized                 
+[36mINFO[0m[2025-03-08 19:31:27] service instance initialized                 
+[36mINFO[0m[2025-03-08 19:31:27] api instance initialized                     
+[36mINFO[0m[2025-03-08 19:31:27] server instance initialized                  
+[36mINFO[0m[2025-03-08 19:31:27] register server started                      
+[36mINFO[0m[2025-03-08 19:31:27] api Register handlers                        
+[36mINFO[0m[2025-03-08 19:31:27] server run                                   
+[36mINFO[0m[2025-03-08 19:31:37] api RegisterFlights handlers                 
+[36mINFO[0m[2025-03-08 19:31:37] ✅ Api.RegisterPassengerFlight make get request for get passenger 
+[31mERRO[0m[2025-03-08 19:31:38] ❌Api.RegisterPassengerFlight get request break 
+[36mINFO[0m[2025-03-08 19:31:43] urlTicketService: http://localhost:8086/flight/%s/passengers 
+[36mINFO[0m[2025-03-08 19:31:43] urlOrchestrator: http://localhost:8087/registration/%s/finish 
+[36mINFO[0m[2025-03-08 19:31:43] GetData []                                   
+[36mINFO[0m[2025-03-08 19:31:43] ✅✅✅ GetData ✅✅✅                              
+[36mINFO[0m[2025-03-08 19:31:48] api RegisterFlights handlers                 
+[36mINFO[0m[2025-03-08 19:31:48] ✅ Api.RegisterPassengerFlight make get request for get passenger 
+[36mINFO[0m[2025-03-08 19:31:48] ✅ Api.RegisterPassengerFlight make register flight 
+[36mINFO[0m[2025-03-08 19:31:48] Service RegisterFlights                      
+[36mINFO[0m[2025-03-08 19:31:48] ✅ Storage.RegisterFlights ✈️ register flight: pp1b2c3d4-e5f6-7890-g1h2 SU-1234 
+[36mINFO[0m[2025-03-08 19:31:48] ✅✈️ Service.RegisterFlights success flight: pp1b2c3d4-e5f6-7890-g1h2 
+[36mINFO[0m[2025-03-08 19:31:54] api RegisterPassenger handlers               
+[36mINFO[0m[2025-03-08 19:31:54] Service RegisterPassenger                    
+[36mINFO[0m[2025-03-08 19:31:54] Storage RegisterPassengerFlight              
+[36mINFO[0m[2025-03-08 19:31:54] ✅ Storage.RegisterPassengerFlight 👤 flight: pp1b2c3d4-e5f6-7890-g1h2 place: 2Ataken passenger: uuid-5678 
+[36mINFO[0m[2025-03-08 19:32:15] GetData [{{pp1b2c3d4-e5f6-7890-g1h2 SU-1234 {0 63877059180 <nil>} {0 63896135400 <nil>} {0 63832975800 <nil>} [{1A business false} {1B business false} {2A economy true} {2B economy false}]} [{uuid-1234 0 Gluten-Free business false} {uuid-5678 1 Standard economy true}] {0 0}}] 
+[36mINFO[0m[2025-03-08 19:32:15] ✅✅✅ GetData ✅✅✅                              
+[36mINFO[0m[2025-03-08 19:32:20] DownloadHandler instance                     
+[36mINFO[0m[2025-03-08 19:33:00] Sending request: {[{Standard 1}] 1}          
+[31mERRO[0m[2025-03-08 19:33:00] ❌✈️ Service.StopRegister not success get send Hikita pp1b2c3d4-e5f6-7890-g1h2 errors:failed to send POST request: Post "http://localhost:8087/registration/pp1b2c3d4-e5f6-7890-g1h2/finish": dial tcp [::1]:8087: connect: connection refused 
+[36mINFO[0m[2025-03-08 19:33:00] ✅ Storage.RemoveFlight️ ✈️ 🗑  flight: pp1b2c3d4-e5f6-7890-g1h2 SU-1234 
+[36mINFO[0m[2025-03-08 19:33:24] DownloadHandler instance                     
