@@ -30,19 +30,21 @@
 
 ```json
 {
-"mealOption":  ["да", "нет"],
-"seatClass": ["economy","business"],
-"maxBaggage" : 20.0,
-"urlTicketService": "http://localhost:8086/flight/%s/passengers",
-"urlOrchestrator": "http://localhost:8087/registration/%s/finish"
+  "mealOption":  ["Standard", "Vegetarian", "Vegan", "Gluten-Free"],
+  "maxBaggage" : 20.0,
+  "urlTicketService": "https://tickets.reaport.ru/flight/%s/passengers",
+  "urlOrchestrator": "http://localhost:8087/registration/%s/finish",
+  "mockUrlTicketService": "http://localhost:8086/flight/%s/passengers",
+  "mockUrlOrchestrator": "http://localhost:8087/registration/%s/finish"
 }
 ```
 
 * `mealOption` - типы питания(динамическое изменение)
-* `seatClass` - типы класса
 * `maxBaggage` - Максимально возможный размер багажа
 * `urlTicketService` - url модуля покупки билетов
 * `urlOrchestrator` - url модуля оркестратора
+*  `mockUrlTicketService` - url mock- модуля покупки билетов
+* `mockUrlOrchestrator` - url mock -модуля оркестратора
 
 
 ### 🛠Админка
