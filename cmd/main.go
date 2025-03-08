@@ -4,9 +4,21 @@ import (
 	"github.com/reaport/register/internal/app"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"io"
+	"os"
 )
 
 func main() {
+	// Открываем файл для записи логов
+	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatal("Не удалось открыть файл логов: ", err)
+	}
+	defer logFile.Close()
+
+	// Настраиваем MultiWriter для вывода в консоль и файл
+	mw := io.MultiWriter(os.Stdout, logFile)
+	logrus.SetOutput(mw)
 	logrus.SetFormatter(&logrus.TextFormatter{
 		ForceColors:     true,                  // Включаем цвета даже если вывод не в TTY (опционально)
 		FullTimestamp:   true,                  // Показываем полные временные метки

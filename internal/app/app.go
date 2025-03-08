@@ -14,7 +14,6 @@ import (
 )
 
 func Run() {
-	// Todo:Реализовать конфиг
 
 	cfg, err := config.NewConfig()
 	if err != nil {

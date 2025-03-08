@@ -1,6 +1,5 @@
 {
   "mealOption":  ["да", "нет"],
-  "seatClass": ["economy","business"],
   "maxBaggage" : 20.0,
   "urlTicketService": "https://tickets.reaport.ru/flight/%s/passengers",
   "urlOrchestrator": "http://localhost:8087/registration/%s/finish",
