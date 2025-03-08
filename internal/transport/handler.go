@@ -7,7 +7,9 @@ import (
 	"github.com/reaport/register/internal/models"
 	"github.com/sirupsen/logrus"
 	"html/template"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -123,210 +125,16 @@ func (api *API) GetData(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-const formTemplate = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update URLs</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fa;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            font-size: 28px;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        h3 {
-            color: #2980b9;
-            font-size: 20px;
-            margin-top: 20px;
-        }
-        h5 {
-            color: #7f8c8d;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        .section {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            margin: 0 auto 30px;
-        }
-        form {
-            margin: 0; /* Убираем лишние отступы формы внутри section */
-        }
-        label {
-            display: block;
-            font-size: 14px;
-            color: #34495e;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #dcdcdc;
-            border-radius: 5px;
-            font-size: 14px;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
-        }
-        input[type="text"]:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            background: #ecf0f1;
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #2c3e50;
-        }
-    </style>
-</head>
-<body>
-    <div class="section">
-        <h1>🚧🛠️ Update URL Configurations 🛠🚧️</h1>
-        <form action="/data" method="POST">
-            <label for="urlTicketService">Ticket Service URL:</label>
-            <input type="text" id="urlTicketService" name="urlTicketService" value="{{.UrlTicketService}}">
-            
-            <label for="urlOrchestrator">Orchestrator URL:</label>
-            <input type="text" id="urlOrchestrator" name="urlOrchestrator" value="{{.UrlOrchestrator}}">
-
-            <label for="maxBaggage">Max Baggage:</label>
-            <input type="text" id="maxBaggage" name="maxBaggage" value="{{.MaxBaggage}}">
-
-            <button type="submit">Update</button>
-        </form>
-    </div>
-
-    <div class="section">
-        <h1>✅✈️ Open Flight ✈️✅</h1>
-        {{range $flightID, $passengers := .Flights}}
-            <h3>Flight ID: {{$flightID}}</h3>
-            <h5>Passenger base:</h5>
-            <ul>
-            {{range $passengers}}
-                <li>{{.}}</li>
-            {{end}}
-            </ul>
-        {{end}}
-    </div>
-
-    <div class="section">
-        <h1>🌏👤 Manual Registration 👤🌏</h1>
-        <form id="passengerForm" action="/passenger" method="POST">
-            <label for="passengerId">Passenger ID:</label>
-            <input type="text" id="passengerId" name="passengerId">
-            
-            <label for="baggageWeight">Baggage Weight:</label>
-            <input type="text" id="baggageWeight" name="baggageWeight">
-
-            <label for="mealOption">Meal Option:</label>
-            <input type="text" id="mealOption" name="mealOption">
-
-            <button type="submit">Update</button>
-        </form>
-    </div>
-
-    <script>
-        document.getElementById('passengerForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Отменяем стандартную отправку формы
-
-            const formData = {
-                uuid: document.getElementById('passengerId').value // Исправлено на uuid для совместимости с сервером
-            };
-
-            // Преобразуем baggageWeight в float, добавляем только если заполнено и валидно
-            const baggageWeightInput = document.getElementById('baggageWeight').value;
-            if (baggageWeightInput) {
-                const baggageWeight = parseFloat(baggageWeightInput);
-                if (!isNaN(baggageWeight)) {
-                    formData.baggageWeight = baggageWeight;
-                } else {
-                    alert('Error: Baggage Weight must be a valid number');
-                    return; // Прерываем отправку, если введено некорректное значение
-                }
-            }
-
-            // Добавляем mealOption, только если поле заполнено
-            const mealOption = document.getElementById('mealOption').value;
-            if (mealOption) {
-                formData.mealOption = mealOption;
-            }
-
-            fetch('/passenger', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json(); // Парсим JSON из ответа
-            })
-            .then(data => {
-                // Выводим результат в alert
-                alert('Success: ' + JSON.stringify(data, null, 2));
-            })
-            .catch(error => {
-                // Выводим ошибку в alert
-                alert('Error: ' + error.message);
-            });
-        });
-    </script>
-</body>
-</html>
-`
-
-// Обработчик для маршрута /data
+// DataHandler остаётся без изменений
 func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		// Отображаем HTML форму с текущими значениями URL
 		tmpl, err := template.New("form").Parse(formTemplate)
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 		dataFlight := api.service.GetData()
-		// Формируем данные для шаблона
 		data := struct {
 			UrlTicketService string
 			UrlOrchestrator  string
@@ -338,14 +146,11 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 			Flights:          dataFlight,
 			MaxBaggage:       api.service.Cfg.MaxBaggage,
 		}
-
-		// Рендерим шаблон
 		if err := tmpl.Execute(w, data); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
 	case "POST":
 		logrus.Info(r.FormValue("urlTicketService"))
-		// Обновляем значения переменных из формы
 		api.service.Cfg.UrlTicketService = r.FormValue("urlTicketService")
 		api.service.Cfg.UrlOrchestrator = r.FormValue("urlOrchestrator")
 		var err error
@@ -353,11 +158,42 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logrus.Errorf("Error parsing maxBaggage %v", err)
 		}
-		// Возвращаем пользователя на страницу с GET запросом
 		http.Redirect(w, r, "/data", http.StatusSeeOther)
-	// Если метод не поддерживается
-	default: // Если метод не поддерживается
+	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// Обработчик для скачивания файлов
+func (api *API) DownloadHandler(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("DownloadHandler instance")
+	switch r.URL.Path {
+	case "/download/logs":
+		serveFile(w, r, "app.log", "application/octet-stream", "logs.txt")
+	case "/download/backup":
+		serveFile(w, r, "backUp.txt", "application/octet-stream", "backup.txt")
+	default:
+		http.Error(w, "Not Foundd", http.StatusInternalServerError)
+	}
+}
+
+// Вспомогательная функция для отправки файла
+func serveFile(w http.ResponseWriter, r *http.Request, filePath, contentType, downloadName string) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		logrus.Errorf("Error opening file %s: %v", filePath, err)
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+
+	w.Header().Set("Content-Disposition", "attachment; filename="+downloadName)
+	w.Header().Set("Content-Type", contentType)
+
+	_, err = io.Copy(w, file)
+	if err != nil {
+		logrus.Errorf("Error serving file %s: %v", filePath, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 

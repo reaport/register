@@ -11,6 +11,7 @@ const (
 	RegisterPassenger = "/passenger"
 	RegisterFlight    = "/flights"
 	Data              = "/data"
+	Download          = "/download"
 )
 
 type API struct {
@@ -28,4 +29,5 @@ func (api *API) Register() {
 	api.router.HandleFunc(RegisterPassenger, api.RegisterPassenger).Methods(http.MethodPost)
 	api.router.HandleFunc(RegisterFlight, api.RegisterFlights).Methods(http.MethodPost)
 	api.router.HandleFunc(Data, api.DataHandler)
+	api.router.PathPrefix(Download).HandlerFunc(api.DownloadHandler).Methods(http.MethodGet)
 }
