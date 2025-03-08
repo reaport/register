@@ -1,0 +1,16 @@
+services:
+  register:
+    build: ./
+    ports:
+      - 8080:8080
+    command: [ "go", "run", "./cmd/main.go" ]
+  ticket:
+    build: ./
+    ports:
+      - 8086:8086
+    command: [ "go", "run", "./mockTicket/main.go" ]
+  orchestrator:
+    build: ./
+    ports:
+      - 8087:8087
+    command: [ "go", "run", "./mockOrchestrator/main.go" ]
