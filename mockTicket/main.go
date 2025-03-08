@@ -39,13 +39,13 @@ func passengersHandler(w http.ResponseWriter, r *http.Request) {
 	passengers := []Passenger{
 		{
 			PassengerId: "uuid-1234",
-			MealOption:  "да",
+			MealOption:  "Gluten-Free",
 			SeatClass:   "business",
 			Baggage:     "да",
 		},
 		{
 			PassengerId: "uuid-5678",
-			MealOption:  "нет",
+			MealOption:  "Standard",
 			SeatClass:   "economy",
 			Baggage:     "да",
 		},

@@ -136,23 +136,32 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		dataFlight := api.service.GetData()
 		data := struct {
-			UrlTicketService string
-			UrlOrchestrator  string
-			Flights          map[string][]string
-			MaxBaggage       float64
+			UrlTicketService     string
+			UrlOrchestrator      string
+			Flights              map[string][]string
+			MaxBaggage           float64
+			MockUrlTicketService string
+			MockUrlOrchestrator  string
+			ProdUrlTicketService string
+			ProdUrlOrchestrator  string
 		}{
-			UrlTicketService: api.service.Cfg.UrlTicketService,
-			UrlOrchestrator:  api.service.Cfg.UrlOrchestrator,
-			Flights:          dataFlight,
-			MaxBaggage:       api.service.Cfg.MaxBaggage,
+			UrlTicketService:     api.service.Cfg.UrlTicketService,
+			UrlOrchestrator:      api.service.Cfg.UrlOrchestrator,
+			ProdUrlTicketService: api.service.Cfg.ProdUrlTicketService,
+			ProdUrlOrchestrator:  api.service.Cfg.ProdUrlOrchestrator,
+			MockUrlTicketService: api.service.Cfg.MockUrlTicketService,
+			MockUrlOrchestrator:  api.service.Cfg.MockUrlOrchestrator,
+			Flights:              dataFlight,
+			MaxBaggage:           api.service.Cfg.MaxBaggage,
 		}
 		if err := tmpl.Execute(w, data); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
 	case "POST":
-		logrus.Info(r.FormValue("urlTicketService"))
 		api.service.Cfg.UrlTicketService = r.FormValue("urlTicketService")
 		api.service.Cfg.UrlOrchestrator = r.FormValue("urlOrchestrator")
+		logrus.Info("urlTicketService: ", r.FormValue("urlTicketService"))
+		logrus.Info("urlOrchestrator: ", r.FormValue("urlOrchestrator"))
 		var err error
 		api.service.Cfg.MaxBaggage, err = strconv.ParseFloat(r.FormValue("maxBaggage"), 64)
 		if err != nil {

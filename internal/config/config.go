@@ -6,10 +6,14 @@ import (
 )
 
 type Config struct {
-	MealOption       []string `json:"mealOption"`
-	MaxBaggage       float64  `json:"maxBaggage"`
-	UrlTicketService string   `json:"urlTicketService"`
-	UrlOrchestrator  string   `json:"urlOrchestrator"`
+	MealOption           []string `json:"mealOption"`
+	MaxBaggage           float64  `json:"maxBaggage"`
+	UrlTicketService     string   `json:"urlTicketService"`
+	UrlOrchestrator      string   `json:"urlOrchestrator"`
+	ProdUrlTicketService string
+	ProdUrlOrchestrator  string
+	MockUrlTicketService string `json:"mockUrlTicketService"`
+	MockUrlOrchestrator  string `json:"mockUrlOrchestrator"`
 }
 
 func NewConfig() (Config, error) {
@@ -28,6 +32,7 @@ func NewConfig() (Config, error) {
 	if err := decoder.Decode(&config); err != nil {
 		return Config{}, err
 	}
-
+	config.ProdUrlOrchestrator = config.UrlOrchestrator
+	config.ProdUrlTicketService = config.UrlTicketService
 	return config, nil
 }

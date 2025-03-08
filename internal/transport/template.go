@@ -65,6 +65,38 @@ const formTemplate = `
             outline: none;
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
         }
+        /* Стили для select */
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #dcdcdc;
+        border-radius: 5px;
+        font-size: 14px;
+        background-color: #fff;
+        color: #34495e;
+        box-sizing: border-box;
+        appearance: none; /* Убираем стандартную стрелку */
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%2334495e" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 12px;
+        cursor: pointer;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    select:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    }
+    select:hover {
+        border-color: #bdc3c7;
+    }
+    select option {
+        padding: 10px;
+        background-color: #fff;
+        color: #34495e;
+    }
         button {
             background-color: #3498db;
             color: white;
@@ -99,10 +131,18 @@ const formTemplate = `
         <h1>🚧🛠️ Update URL Configurations 🛠🚧️</h1>
         <form action="/data" method="POST">
             <label for="urlTicketService">Ticket Service URL:</label>
-            <input type="text" id="urlTicketService" name="urlTicketService" value="{{.UrlTicketService}}">
-            
-            <label for="urlOrchestrator">Orchestrator URL:</label>
-            <input type="text" id="urlOrchestrator" name="urlOrchestrator" value="{{.UrlOrchestrator}}">
+            <h5>Now : {{.UrlTicketService}}</h5>
+            <select id="urlTicketService" name="urlTicketService">
+            <option value="{{.ProdUrlTicketService}}">🎟 Ticket Service</option>
+            <option value="{{.MockUrlTicketService}}">🛠 Mock Ticket Service</option>
+             </select>
+
+            <label for="urlOrchestrator">Orchestrator Service URL:</label>
+            <h5>Now : {{.UrlOrchestrator}}</h5>
+            <select id="urlOrchestrator" name="urlOrchestrator">
+            <option value="{{.ProdUrlOrchestrator}}">🌍 Orchestrator Service</option>
+            <option value="{{.MockUrlOrchestrator}}">🛠Mock Orchestrator Service</option>
+             </select>
 
             <label for="maxBaggage">Max Baggage:</label>
             <input type="text" id="maxBaggage" name="maxBaggage" value="{{.MaxBaggage}}">
@@ -155,7 +195,7 @@ const formTemplate = `
         document.getElementById('passengerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = {
-                uuid: document.getElementById('passengerId').value
+                passengerId: document.getElementById('passengerId').value
             };
             const baggageWeightInput = document.getElementById('baggageWeight').value;
             if (baggageWeightInput) {
@@ -179,17 +219,23 @@ const formTemplate = `
                 body: JSON.stringify(formData)
             })
             .then(response => {
+            // Парсим JSON независимо от статуса ответа
+            return response.json().then(data => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
+                    // Если статус не 2xx, выбрасываем ошибку с данными из JSON
+                    throw new Error(data.errors || 'Unknown error occurred');
                 }
-                return response.json();
-            })
-            .then(data => {
-                alert('Success: ' + JSON.stringify(data, null, 2));
-            })
-            .catch(error => {
-                alert('Error: ' + error.message);
+                return data; // Успешный ответ
             });
+        })
+        .then(data => {
+            // Успешный случай
+            alert('Success: ' + JSON.stringify(data, null, 2));
+        })
+        .catch(error => {
+            // Обработка всех ошибок (сетевых или из JSON)
+            alert('Error: ' + error.message);
+        });
         });
     </script>
 </body>
