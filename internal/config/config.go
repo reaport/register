@@ -7,7 +7,6 @@ import (
 
 type Config struct {
 	MealOption       []string `json:"mealOption"`
-	SeatClass        []string `json:"seatClass"`
 	MaxBaggage       float64  `json:"maxBaggage"`
 	UrlTicketService string   `json:"urlTicketService"`
 	UrlOrchestrator  string   `json:"urlOrchestrator"`
