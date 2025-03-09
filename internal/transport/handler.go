@@ -10,7 +10,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 func (api *API) RegisterPassenger(w http.ResponseWriter, r *http.Request) {
@@ -139,7 +138,6 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 			UrlTicketService     string
 			UrlOrchestrator      string
 			Flights              map[string][]string
-			MaxBaggage           float64
 			MockUrlTicketService string
 			MockUrlOrchestrator  string
 			ProdUrlTicketService string
@@ -152,7 +150,6 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 			MockUrlTicketService: api.service.Cfg.MockUrlTicketService,
 			MockUrlOrchestrator:  api.service.Cfg.MockUrlOrchestrator,
 			Flights:              dataFlight,
-			MaxBaggage:           api.service.Cfg.MaxBaggage,
 		}
 		if err := tmpl.Execute(w, data); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -162,11 +159,6 @@ func (api *API) DataHandler(w http.ResponseWriter, r *http.Request) {
 		api.service.Cfg.UrlOrchestrator = r.FormValue("urlOrchestrator")
 		logrus.Info("urlTicketService: ", r.FormValue("urlTicketService"))
 		logrus.Info("urlOrchestrator: ", r.FormValue("urlOrchestrator"))
-		var err error
-		api.service.Cfg.MaxBaggage, err = strconv.ParseFloat(r.FormValue("maxBaggage"), 64)
-		if err != nil {
-			logrus.Errorf("Error parsing maxBaggage %v", err)
-		}
 		http.Redirect(w, r, "/data", http.StatusSeeOther)
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)

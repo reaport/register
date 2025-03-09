@@ -144,9 +144,6 @@ const formTemplate = `
             <option value="{{.MockUrlOrchestrator}}">🛠Mock Orchestrator Service</option>
              </select>
 
-            <label for="maxBaggage">Max Baggage:</label>
-            <input type="text" id="maxBaggage" name="maxBaggage" value="{{.MaxBaggage}}">
-
             <button type="submit">Update</button>
         </form>
     </div>
