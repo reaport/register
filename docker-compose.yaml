@@ -16,7 +16,7 @@ services:
       - traefik.http.routers.airport-register-h34dvn-23-websecure.entrypoints=websecure
       - traefik.http.services.airport-register-h34dvn-23-websecure.loadbalancer.server.port=8080
       - traefik.http.routers.airport-register-h34dvn-23-websecure.service=airport-register-h34dvn-23-websecure
-      - traefik.http.routers.airport-register-h34dvn-23-web.middlewares=corsHeaders@file
+      - traefik.http.routers.airport-register-h34dvn-23-websecure.middlewares=corsHeaders@file
       - traefik.http.routers.airport-register-h34dvn-23-websecure.tls.certresolver=letsencrypt
     networks:
       - dokploy-network
