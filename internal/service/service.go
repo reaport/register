@@ -163,7 +163,7 @@ func (s *Service) SendOrch(reqData models.RegistrationFinishRequest, flightId st
 	defer resp.Body.Close()
 
 	// Проверяем статус ответа
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 

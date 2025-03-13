@@ -28,7 +28,7 @@ func finishRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Устанавливаем заголовок ответа
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusNoContent)
 
 	log.Print("Ok", r.Body)
 }
