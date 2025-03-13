@@ -118,7 +118,7 @@ type Meal struct {
 }
 
 func (s *Service) SendOrch(reqData models.RegistrationFinishRequest, flightId string) error {
-	var mealSlice []Meal
+	mealSlice := make([]Meal, 0)
 	for typeMeal, count := range reqData.Meal {
 		mealSlice = append(mealSlice, Meal{
 			TypeMeal: typeMeal,
@@ -131,7 +131,7 @@ func (s *Service) SendOrch(reqData models.RegistrationFinishRequest, flightId st
 		Meal:          mealSlice,
 		BaggageWeight: reqData.BaggageWeight,
 	}
-
+	logrus.Info("✈️ RegistrationFinishRequest (req Orch): ", req)
 	// Если время еще не наступило, сохраняем данные в backUp.txt
 	file, err := os.Create("backUp.txt")
 	if err != nil {
