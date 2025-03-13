@@ -10,7 +10,7 @@ import (
 // Структура Passenger для ответа
 type Passenger struct {
 	PassengerId string `json:"passengerId"`
-	MealOption  string `json:"mealOption"`
+	MealType    string `json:"mealType"`
 	SeatClass   string `json:"seatClass"`
 	Baggage     string `json:"baggage"`
 }
@@ -39,13 +39,13 @@ func passengersHandler(w http.ResponseWriter, r *http.Request) {
 	passengers := []Passenger{
 		{
 			PassengerId: "uuid-1234",
-			MealOption:  "Gluten-Free",
+			MealType:    "Gluten-Free",
 			SeatClass:   "business",
 			Baggage:     "да",
 		},
 		{
 			PassengerId: "uuid-5678",
-			MealOption:  "Standard",
+			MealType:    "Standard",
 			SeatClass:   "economy",
 			Baggage:     "да",
 		},

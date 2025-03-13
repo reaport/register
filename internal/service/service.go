@@ -28,13 +28,13 @@ func (s *Service) RegisterPassenger(passenger models.Passenger) (models.Passenge
 	var i int
 	// Проверяем что питание соотв конфигу
 	for i = 0; i < len(s.Cfg.MealOption); i++ {
-		if passenger.MealOption == s.Cfg.MealOption[i] {
+		if passenger.MealType == s.Cfg.MealOption[i] {
 			break
 		}
 	}
 
 	if i == len(s.Cfg.MealOption) {
-		passenger.MealOption = ""
+		passenger.MealType = ""
 	}
 
 	// Проверяем багаж

@@ -108,8 +108,8 @@ func (s *Storage) getFlightAndIndexHumanAndSetMeal(human models.Passenger) (stri
 		for passengerIndex, passenger := range s.flights[i].passengers {
 			if passenger.Uuid == human.Uuid {
 				// Меняем питание если появились новые предпочтения
-				if human.MealOption != "" {
-					s.flights[i].passengers[passengerIndex].MealOption = human.MealOption
+				if human.MealType != "" {
+					s.flights[i].passengers[passengerIndex].MealType = human.MealType
 				}
 				if human.BaggageWeight > 0.0 {
 					s.flights[i].passengers[passengerIndex].BaggageWeight = human.BaggageWeight
@@ -129,7 +129,7 @@ func (s *Storage) GetMealsAndBaggage(flightId string) (models.RegistrationFinish
 				// Если пассажир зарегался
 				if human.Have {
 					result.BaggageWeight += human.BaggageWeight
-					result.Meal[human.MealOption] += 1
+					result.Meal[human.MealType] += 1
 				}
 			}
 			return result, nil

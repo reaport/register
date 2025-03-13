@@ -5,7 +5,7 @@ import "time"
 type Passenger struct {
 	Uuid          string  `json:"passengerId"`
 	BaggageWeight float64 `json:"baggageWeight"`
-	MealOption    string  `json:"mealOption"`
+	MealType      string  `json:"mealType"`
 	SeatClass     string  `json:"seatClass"`
 	Have          bool    // true - зарегестрировался
 }
