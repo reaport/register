@@ -1,16 +1,41 @@
 services:
   register:
     build: ./
-    ports:
-      - 8080:8080
-    command: [ "go", "run", "./cmd/main.go" ]
+    command:
+      - go
+      - run
+      - ./cmd/main.go
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.airport-register-h34dvn-23-web.rule=Host(`register.reaport.ru`)
+      - traefik.http.routers.airport-register-h34dvn-23-web.entrypoints=web
+      - traefik.http.services.airport-register-h34dvn-23-web.loadbalancer.server.port=8080
+      - traefik.http.routers.airport-register-h34dvn-23-web.service=airport-register-h34dvn-23-web
+      - traefik.http.routers.airport-register-h34dvn-23-web.middlewares=redirect-to-https@file,corsHeaders@file
+      - traefik.http.routers.airport-register-h34dvn-23-websecure.rule=Host(`register.reaport.ru`)
+      - traefik.http.routers.airport-register-h34dvn-23-websecure.entrypoints=websecure
+      - traefik.http.services.airport-register-h34dvn-23-websecure.loadbalancer.server.port=8080
+      - traefik.http.routers.airport-register-h34dvn-23-websecure.service=airport-register-h34dvn-23-websecure
+      - traefik.http.routers.airport-register-h34dvn-23-web.middlewares=corsHeaders@file
+      - traefik.http.routers.airport-register-h34dvn-23-websecure.tls.certresolver=letsencrypt
+    networks:
+      - dokploy-network
   ticket:
     build: ./
     ports:
-      - 8086:8086
-    command: [ "go", "run", "./mockTicket/main.go" ]
+      - '8086:8086'
+    command:
+      - go
+      - run
+      - ./mockTicket/main.go
   orchestrator:
     build: ./
     ports:
-      - 8087:8087
-    command: [ "go", "run", "./mockOrchestrator/main.go" ]
+      - '8087:8087'
+    command:
+      - go
+      - run
+      - ./mockOrchestrator/main.go
+networks:
+  dokploy-network:
+    external: true
