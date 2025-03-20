@@ -80,13 +80,13 @@ func (api *API) RegisterFlights(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resp.Body.Close()
-
+	logrus.Error("Api.RegisterPassengerFlight status resp.StatusCode ticket service ", resp.StatusCode)
 	// Проверяем статус-код (что рейс найден и можно получать пассажиров)
 	if resp.StatusCode != http.StatusOK {
 		writeResponse(w, errors.ErrTicketUnavailable)
 		return
 	}
-
+	logrus.Error("Api.RegisterPassengerFlight parsing ")
 	// Читаем и парсим тело ответа
 	var passengers []models.Passenger
 	err = json.NewDecoder(resp.Body).Decode(&passengers)
