@@ -68,9 +68,9 @@ func (api *API) RegisterFlights(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	logrus.Info("✅ Api.RegisterPassengerFlight make get request for get passenger")
 	// Формируем URL для GET-запроса
 	url := fmt.Sprintf(api.service.Cfg.UrlTicketService, flight.FlightId)
+	logrus.Info("✅ Api.RegisterPassengerFlight make get request for get passenger, url", url)
 	var resp *http.Response
 	// Выполняем GET-запрос
 	resp, err = http.Get(url)
