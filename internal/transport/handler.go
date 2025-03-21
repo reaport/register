@@ -80,7 +80,7 @@ func (api *API) RegisterFlights(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resp.Body.Close()
-	logrus.Error("Api.RegisterPassengerFlight status resp.StatusCode ticket service ", resp.StatusCode)
+	logrus.Error("Api.RegisterPassengerFlight status resp.StatusCode ticket service ", resp.StatusCode, resp.Body)
 	// Проверяем статус-код (что рейс найден и можно получать пассажиров)
 	if resp.StatusCode != http.StatusOK {
 		writeResponse(w, errors.ErrTicketUnavailable)

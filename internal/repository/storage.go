@@ -64,7 +64,8 @@ func (s *Storage) RegisterPassengerFlight(passenger models.Passenger) (models.Pa
 					return models.PassengerResponse{FlightName: s.flights[i].flights.FlightName, DepartureTime: s.flights[i].flights.DepartureTime, StartPlantingTime: s.flights[i].flights.StartPlantingTime, Seat: seat.SeatNumber}, nil
 				}
 			}
-			logrus.Error("❌Storage.RegisterPassengerFlight 👤 unexpected overbooking: ", " flight: ", flightId, " места ", s.flights[i].flights.SeatsAircraft)
+			logrus.Error("❌Storage.RegisterPassengerFlight 👤 unexpected overbooking: ", " flight: ", flightId, " места ", s.flights[i].flights.SeatsAircraft, "\n passanger", s.flights[i].passengers)
+
 			return models.PassengerResponse{}, errors.ErrInternalServer
 		}
 	}
