@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -52,6 +53,10 @@ func (s *Service) RegisterPassenger(passenger models.Passenger) (models.Passenge
 
 func (s *Service) RegisterFlights(flight models.Flight, passengers []models.Passenger) error {
 	logrus.Info("Service RegisterFlights")
+	//Меняем в нижний регистр
+	for i := 0; i < len(passengers); i++ {
+		passengers[i].SeatClass = strings.ToLower(passengers[i].SeatClass)
+	}
 	// Регистрация рейса
 	registationTime, err := s.repo.RegisterFlights(flight, passengers)
 	if err != nil {
